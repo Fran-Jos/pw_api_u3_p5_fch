@@ -1,8 +1,9 @@
 package com.example.demo.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.example.demo.modelo.Estudiante;
 import com.example.demo.repository.IEstudianteRepository;
 
@@ -41,5 +42,13 @@ public class EstudianteServiceImpl implements IEstudianteService {
 		// TODO Auto-generated method stub
 		this.estudianteRepository.eliminar(id);
 	}
+
+	@Override
+	public List<Estudiante> seleccionartodos(String genero) {
+		// TODO Auto-generated method stub
+
+		return this.estudianteRepository.seleccionartodos(genero);
+	}
+
 
 }

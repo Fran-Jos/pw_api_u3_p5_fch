@@ -1,5 +1,7 @@
 package com.example.demo.repository;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import com.example.demo.modelo.Estudiante;
@@ -52,5 +54,17 @@ public class EstudianteRepositoryImpl implements IEstudianteRepository {
 		// TODO Auto-generated method stub
 		this.entityManager.remove(this.seleccionar(id));
 	}
+	
+	@Override
+	public List<Estudiante> seleccionartodos(String genero) {
+		// TODO Auto-generated method stub
+		Query query = this.entityManager.createQuery("SELECT e FROM Estudiante e WHERE e.genero=:variable");
+		query.setParameter("variable", genero);
+		return query.getResultList();
+	}
+
+
+
+
 
 }
