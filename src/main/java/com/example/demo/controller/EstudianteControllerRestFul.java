@@ -1,9 +1,11 @@
 package com.example.demo.controller;
 
-
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -33,40 +35,54 @@ public class EstudianteControllerRestFul {
 	private IEstudianteService estudianteService;
 
 	// Métodos: Capacidades
-	//http://localhost:8080/API/v1.0/Matricula/estudiantes/{id}
-	@GetMapping(path = "/{id}")
-	public Estudiante consultar(@PathVariable Integer id) {
-		return this.estudianteService.buscar(id);
+	// http://localhost:8080/API/v1.0/Matricula/estudiantes/{id}
+	@GetMapping(path = "/{id}", produces = "application/xml")
+	public ResponseEntity<Estudiante> consultar(@PathVariable Integer id) {
+		// 241: GRUPO satisfactorias.
+		// 241: Recurso Estudiante encontrado satisfactoriamente
+		Estudiante estu = this.estudianteService.buscar(id);
+		// 200 ok
+		// --------
+
+		// 401 autenticación
+		// Contrato de la API (documento pdf, Swagger.io)
+		// nos permite docuemntar el contrato de una API.
+		return ResponseEntity.status(241).body(estu);
+		// return ResponseEntity.status(HttpStatus.OK).body(estu);
 	}
 
-	@GetMapping
-	public List<Estudiante> buscartodos(@RequestParam(required = false , defaultValue = "M") String genero){
-		return this.estudianteService.seleccionartodos(genero);
+	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<Estudiante>> buscartodos(
+			@RequestParam(required = false, defaultValue = "M") String genero) {
+
+		List<Estudiante> lista = this.estudianteService.seleccionartodos(genero);
+
+		HttpHeaders cabeceras = new HttpHeaders();
+		cabeceras.add("mensaje_242", "lista consultada de manera satisfactoria");
+
+		return new ResponseEntity<>(lista, cabeceras, 242);
 	}
 
-	@PostMapping
+	@PostMapping(consumes = MediaType.APPLICATION_XML_VALUE)
 	public void guardar(@RequestBody Estudiante estudiante) {
 		this.estudianteService.guardar(estudiante);
 	}
 
-	@PutMapping(path = "/{id}")
-	public void actualizar(@RequestBody Estudiante estudiante,@PathVariable Integer id) {
+	@PutMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void actualizar(@RequestBody Estudiante estudiante, @PathVariable Integer id) {
 		estudiante.setId(id);
 		this.estudianteService.actualizar(estudiante);
 	}
-	
-	@PatchMapping(path = "/{id}")
-	public void actualizarParcial(@RequestBody Estudiante estudiante,@PathVariable Integer id) {
-		this.estudianteService.actualizarParcial(estudiante.getApellido(), estudiante.getNombre(),estudiante.getId());
+
+	@PatchMapping(path = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public void actualizarParcial(@RequestBody Estudiante estudiante, @PathVariable Integer id) {
+		this.estudianteService.actualizarParcial(estudiante.getApellido(), estudiante.getNombre(), estudiante.getId());
 	}
 
 	@DeleteMapping(path = "/{id}")
-	public void borrar(@PathVariable Integer id){
+	public void borrar(@PathVariable Integer id) {
 		this.estudianteService.eliminar(id);
 	}
 
-	
-
-	
-	//http://localhost:8080/API/v1.0/Matricula/estudiantes/buscartodos?genero=M
+	// http://localhost:8080/API/v1.0/Matricula/estudiantes/buscartodos?genero=M
 }

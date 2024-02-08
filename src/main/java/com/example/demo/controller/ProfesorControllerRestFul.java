@@ -20,7 +20,7 @@ import com.example.demo.service.IProfesorService;
 @RestController // servicio
 @RequestMapping(path = "/profesores")
 public class ProfesorControllerRestFul {
-
+    
     @Autowired
     private IProfesorService iProfesorService;
 
