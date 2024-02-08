@@ -55,6 +55,7 @@ public class EstudianteControllerRestFul {
 	public ResponseEntity<List<Estudiante>> buscartodos(
 			@RequestParam(required = false, defaultValue = "M") String genero) {
 
+
 		List<Estudiante> lista = this.estudianteService.seleccionartodos(genero);
 
 		HttpHeaders cabeceras = new HttpHeaders();
@@ -79,7 +80,7 @@ public class EstudianteControllerRestFul {
 		this.estudianteService.actualizarParcial(estudiante.getApellido(), estudiante.getNombre(), estudiante.getId());
 	}
 
-	@DeleteMapping(path = "/{id}")
+	@DeleteMapping(path = "/{id}" )
 	public void borrar(@PathVariable Integer id) {
 		this.estudianteService.eliminar(id);
 	}
