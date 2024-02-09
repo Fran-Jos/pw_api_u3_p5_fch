@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -19,6 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.modelo.Estudiante;
 import com.example.demo.service.IEstudianteService;
+import com.example.demo.service.IMateriaService;
+import com.example.demo.service.to.EstudianteTO;
+import com.example.demo.service.to.MateriaTO;
+
+
 
 //Una API puede tener muchos servicios
 //API: determinada por el proyecto Java
@@ -34,9 +40,12 @@ public class EstudianteControllerRestFul {
 	@Autowired
 	private IEstudianteService estudianteService;
 
+	@Autowired
+	private IMateriaService materiaService;
+
 	// Métodos: Capacidades
 	// http://localhost:8080/API/v1.0/Matricula/estudiantes/{id}
-	@GetMapping(path = "/{id}", produces = "application/xml")
+	@GetMapping(path = "/{id}", produces = "application/json")
 	public ResponseEntity<Estudiante> consultar(@PathVariable Integer id) {
 		// 241: GRUPO satisfactorias.
 		// 241: Recurso Estudiante encontrado satisfactoriamente
@@ -51,7 +60,7 @@ public class EstudianteControllerRestFul {
 		// return ResponseEntity.status(HttpStatus.OK).body(estu);
 	}
 
-	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/tmp", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<List<Estudiante>> buscartodos(
 			@RequestParam(required = false, defaultValue = "M") String genero) {
 
@@ -63,6 +72,25 @@ public class EstudianteControllerRestFul {
 
 		return new ResponseEntity<>(lista, cabeceras, 242);
 	}
+    // ojo --> el metodo utlizando el objeto TO
+
+	@GetMapping( produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<EstudianteTO>> buscartodosHATEOAS() {
+		List<EstudianteTO> lista = this.estudianteService.seleccionartodosTO();
+		
+		return ResponseEntity.status(HttpStatus.OK).body(lista);
+	}
+
+	@GetMapping(path = "/{id}/materias", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<List<MateriaTO>> consultarMateriasPorId(Integer idEstudiante) {
+	
+		List<MateriaTO> lista = this.materiaService.buscarPorIdEstudiante(idEstudiante);
+		System.out.println("Lista de materias: " + lista);
+		return ResponseEntity.status(HttpStatus.OK).body(lista);
+	}
+
+	// http://localhost:8080/API/v1.0/Matricula/estudiantes/2/materias GET
+
 
 	@PostMapping(consumes = MediaType.APPLICATION_XML_VALUE)
 	public void guardar(@RequestBody Estudiante estudiante) {
